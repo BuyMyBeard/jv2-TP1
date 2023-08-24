@@ -21,7 +21,6 @@ public class PlayerInputs : MonoBehaviour
 
     public bool RunInput { get; private set; } = false;
     public bool JumpPress { get; private set; } = false;
-
     public bool JumpHold { get; private set; } = false;
     void Awake()
     {

@@ -7,19 +7,20 @@ using UnityEngine.InputSystem;
 public class PlayerMove : MonoBehaviour
 {
     [SerializeField] float mouseSensitivity = 1;
-    [SerializeField] float verticalMinClamp = -15;
-    [SerializeField] float verticalMaxClamp = 90;
+    [SerializeField] float camMinClamp = -15;
+    [SerializeField] float camMaxClamp = 90;
     [SerializeField] float walkSpeed = 10;
     [SerializeField] float runMultiplier = 3;
     [SerializeField] float jumpImpulse = 20;
     [SerializeField] float groundCheckDistance = 1;
     [SerializeField] LayerMask groundLayer;
-    float verticalRotation = 0;
+    
     PlayerInputs inputs;
     Rigidbody rb;
     Camera cam;
     CapsuleCollider cc;
 
+    float verticalRotation = 0;
     bool isGrounded = false;
 
     Vector3 GroundCheckOrigin
@@ -38,33 +39,36 @@ public class PlayerMove : MonoBehaviour
 
     void Update()
     {
-        Vector2 delta = mouseSensitivity * Time.deltaTime * inputs.LookDelta;
-        float prevVerticalRotation = verticalRotation;
-        verticalRotation -= delta.y;
-        verticalRotation = Mathf.Clamp(verticalRotation, verticalMinClamp, verticalMaxClamp);
-        cam.transform.RotateAround(transform.position, transform.TransformDirection(Vector3.right), verticalRotation - prevVerticalRotation) ;
-        isGrounded = Physics.Raycast(GroundCheckOrigin, Vector3.down, groundCheckDistance, groundLayer);
-        transform.Rotate(Vector3.up * delta.x);
-        //Vector3 lookDirection = new Vector3(0, cam.transform.eulerAngles.y - 6.72f, 0);
-        //transform.eulerAngles = lookDirection;
+        MoveCamera();
+        MoveCharacter();
+    }
+
+    private void MoveCharacter()
+    {
         Vector3 movement = new Vector3(inputs.MoveInput.x, 0, inputs.MoveInput.y);
         if (inputs.RunInput && movement.z > 0)
             movement.z *= runMultiplier;
 
         movement = cam.transform.forward * movement.z + cam.transform.right * movement.x;
-
         movement *= walkSpeed;
         movement.y = rb.velocity.y;
 
+        isGrounded = Physics.Raycast(GroundCheckOrigin, Vector3.down, groundCheckDistance, groundLayer);
         if (inputs.JumpPress && isGrounded)
             movement.y = jumpImpulse;
-        Debug.Log(rb.velocity);
+
         rb.velocity = movement;
+
+        Debug.DrawRay(GroundCheckOrigin, Vector3.down * groundCheckDistance, Color.red);
     }
 
-    private void OnDrawGizmos()
+    private void MoveCamera()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(GroundCheckOrigin, GroundCheckOrigin + Vector3.down * groundCheckDistance);
+        Vector2 delta = mouseSensitivity * Time.deltaTime * inputs.LookDelta;
+        float prevVerticalRotation = verticalRotation;
+        verticalRotation -= delta.y;
+        verticalRotation = Mathf.Clamp(verticalRotation, camMinClamp, camMaxClamp);
+        cam.transform.RotateAround(transform.position, transform.TransformDirection(Vector3.right), verticalRotation - prevVerticalRotation);
+        transform.Rotate(Vector3.up * delta.x);
     }
 }

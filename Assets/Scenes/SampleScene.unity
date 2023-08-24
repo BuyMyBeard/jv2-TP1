@@ -251,8 +251,8 @@ MonoBehaviour:
   verticalMaxClamp: 90
   walkSpeed: 10
   runMultiplier: 3
-  jumpImpulse: 20
-  groundCheckDistance: 0.05
+  jumpImpulse: 5
+  groundCheckDistance: 0.1
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
