@@ -9,7 +9,7 @@ public class PlayerInputs : MonoBehaviour
 {
     [SerializeField] float jumpBuffer = 0.1f;
     ActionMap inputs;
-    InputAction runAction, jumpAction;
+    InputAction runAction, jumpAction, interactAction;
     public Vector2 MoveInput
     {
         get => inputs.PlayerControls.Move.ReadValue<Vector2>();
@@ -22,11 +22,14 @@ public class PlayerInputs : MonoBehaviour
     public bool RunInput { get; private set; } = false;
     public bool JumpPress { get; private set; } = false;
     public bool JumpHold { get; private set; } = false;
+
+    public bool InteractHold { get; private set; } = false;
     void Awake()
     {
         inputs = new ActionMap();
         runAction = inputs.FindAction("Run");
         jumpAction = inputs.FindAction("Jump");
+        interactAction = inputs.FindAction("Interact");
     }
 
     private void OnEnable()
@@ -36,6 +39,8 @@ public class PlayerInputs : MonoBehaviour
         runAction.canceled += (_) => RunInput = false;
         jumpAction.started += (_) => { StartCoroutine(BufferJump()); JumpHold = true; };
         jumpAction.canceled += (_) => JumpHold = false;
+        interactAction.started += (_) => InteractHold = true;
+        interactAction.canceled += (_) => InteractHold = false;
     }
 
     private IEnumerator BufferJump()
@@ -44,5 +49,7 @@ public class PlayerInputs : MonoBehaviour
         yield return new WaitForSeconds(jumpBuffer);
         JumpPress = false;
     }
+
+
 
 }
