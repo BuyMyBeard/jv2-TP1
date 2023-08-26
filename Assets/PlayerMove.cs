@@ -14,11 +14,13 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] float jumpImpulse = 20;
     [SerializeField] float groundCheckDistance = 1;
     [SerializeField] LayerMask groundLayer;
+    [SerializeField] Transform head;
     
     PlayerInputs inputs;
     Rigidbody rb;
     Camera cam;
     CapsuleCollider cc;
+    Animator animator;
 
     float verticalRotation = 0;
     bool isGrounded = false;
@@ -35,6 +37,7 @@ public class PlayerMove : MonoBehaviour
         inputs = GetComponent<PlayerInputs>();
         cc = GetComponent<CapsuleCollider>();
         cam = Camera.main;
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -47,13 +50,25 @@ public class PlayerMove : MonoBehaviour
     {
         Vector3 movement = new Vector3(inputs.MoveInput.x, 0, inputs.MoveInput.y);
         if (inputs.RunInput && movement.z > 0)
+        {
             movement.z *= runMultiplier;
+            animator.SetBool("IsRunning", true);
+        }
+        else
+            animator.SetBool("IsRunning", false);
+
+        animator.SetBool("IsWalking", movement.z != 0);
+
+        animator.SetBool("IsStrafingLeft", movement.x < 0 && movement.z == 0);
+        animator.SetBool("IsStrafingRight", movement.x > 0 && movement.z == 0);
 
         movement = cam.transform.forward * movement.z + cam.transform.right * movement.x;
         movement *= walkSpeed;
         movement.y = rb.velocity.y;
 
         isGrounded = Physics.Raycast(GroundCheckOrigin, Vector3.down, groundCheckDistance, groundLayer);
+
+        animator.SetBool("IsJumping", !isGrounded);
         if (inputs.JumpPress && isGrounded)
             movement.y = jumpImpulse;
 
@@ -68,7 +83,7 @@ public class PlayerMove : MonoBehaviour
         float prevVerticalRotation = verticalRotation;
         verticalRotation -= delta.y;
         verticalRotation = Mathf.Clamp(verticalRotation, camMinClamp, camMaxClamp);
-        cam.transform.RotateAround(transform.position, transform.TransformDirection(Vector3.right), verticalRotation - prevVerticalRotation);
+        head.transform.Rotate(new Vector3(verticalRotation - prevVerticalRotation, 0, 0));
         transform.Rotate(Vector3.up * delta.x);
     }
 }

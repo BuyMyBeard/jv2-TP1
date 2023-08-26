@@ -22,7 +22,7 @@ public class PlayerInputs : MonoBehaviour
     public bool RunInput { get; private set; } = false;
     public bool JumpPress { get; private set; } = false;
     public bool JumpHold { get; private set; } = false;
-
+    public bool InteractPress { get; private set; } = false;
     public bool InteractHold { get; private set; } = false;
     void Awake()
     {
@@ -39,7 +39,7 @@ public class PlayerInputs : MonoBehaviour
         runAction.canceled += (_) => RunInput = false;
         jumpAction.started += (_) => { StartCoroutine(BufferJump()); JumpHold = true; };
         jumpAction.canceled += (_) => JumpHold = false;
-        interactAction.started += (_) => InteractHold = true;
+        interactAction.started += (_) => { StartCoroutine(BufferInteract()); InteractHold = true; };
         interactAction.canceled += (_) => InteractHold = false;
     }
 
@@ -49,7 +49,10 @@ public class PlayerInputs : MonoBehaviour
         yield return new WaitForSeconds(jumpBuffer);
         JumpPress = false;
     }
-
-
-
+    private IEnumerator BufferInteract()
+    {
+        InteractPress = true;
+        yield return new WaitForSeconds(jumpBuffer);
+        InteractPress = false;
+    }
 }
