@@ -62,7 +62,7 @@ public class PlayerMove : MonoBehaviour
         animator.SetBool("IsStrafingLeft", movement.x < 0 && movement.z == 0);
         animator.SetBool("IsStrafingRight", movement.x > 0 && movement.z == 0);
 
-        movement = cam.transform.forward * movement.z + cam.transform.right * movement.x;
+        movement = transform.forward * movement.z * -1 + transform.right * movement.x * -1;
         movement *= walkSpeed;
         movement.y = rb.velocity.y;
 
