@@ -5309,6 +5309,10 @@ PrefabInstance:
       propertyPath: head
       value: 
       objectReference: {fileID: 190909292}
+    - target: {fileID: 2343272609108665500, guid: 9ed814cb6f24bc84da2bb25f88044da5, type: 3}
+      propertyPath: groundCheckDistance
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 6999630452109004539, guid: 9ed814cb6f24bc84da2bb25f88044da5, type: 3}
       propertyPath: m_Name
       value: Player (1)
