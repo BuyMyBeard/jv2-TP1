@@ -27,7 +27,7 @@ public class PlayerMove : MonoBehaviour
 
     Vector3 GroundCheckOrigin
     {
-        get => transform.position + new Vector3(0, -cc.height / 2, 0);
+        get => transform.position + new Vector3(0, (-cc.height / 2) + 0.05f, 0);
     }
 
     // Start is called before the first frame update
