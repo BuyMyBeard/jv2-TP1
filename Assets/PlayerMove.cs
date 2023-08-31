@@ -71,7 +71,8 @@ public class PlayerMove : MonoBehaviour
         animator.SetBool("IsJumping", !characterController.isGrounded);
         if (inputs.JumpPress && characterController.isGrounded)
             velocity.y = jumpImpulse;
-
+        else if (characterController.isGrounded)
+            velocity.y = -1;
         characterController.Move((walkSpeed * movement + velocity) * Time.deltaTime);
     }
 

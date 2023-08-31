@@ -46,6 +46,7 @@ public class ButtonPrompt : MonoBehaviour
     {
         inputs = FindObjectOfType<PlayerInputs>();
         player = FindObjectOfType<PlayerMove>().transform;
+        HidePrompt();
     }
     void Update()
     {
