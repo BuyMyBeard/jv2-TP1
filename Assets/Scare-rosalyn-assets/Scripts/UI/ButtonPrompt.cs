@@ -36,8 +36,8 @@ public class ButtonPrompt : MonoBehaviour
     [SerializeField] TextMeshProUGUI textPrompt;
     [SerializeField] GameObject[] display;
     //[SerializeField] float cooldown = 0.5f;
-    [SerializeField] Transform monster;
-    public List<Interactable> possiblePrompts = new();
+    Transform player;
+    List<Interactable> possiblePrompts = new();
     Interactable currentPrompt;
     PlayerInputs inputs;
     //bool onCooldown = false;
@@ -45,6 +45,7 @@ public class ButtonPrompt : MonoBehaviour
     void Awake()
     {
         inputs = FindObjectOfType<PlayerInputs>();
+        player = FindObjectOfType<PlayerMove>().transform;
     }
     void Update()
     {
@@ -85,10 +86,10 @@ public class ButtonPrompt : MonoBehaviour
         else
         {
             Interactable closestPrompt = possiblePrompts.First();
-            float shortestDistance = (monster.position - closestPrompt.transform.position).magnitude;
+            float shortestDistance = (player.position - closestPrompt.transform.position).magnitude;
             for (int i = 1; i < possiblePrompts.Count; i++)
             {
-                float distance = (monster.position - possiblePrompts[i].transform.position).magnitude;
+                float distance = (player.position - possiblePrompts[i].transform.position).magnitude;
                 if (distance < shortestDistance)
                 {
                     shortestDistance = distance;
