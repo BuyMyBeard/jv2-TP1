@@ -13,15 +13,17 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] float runMultiplier = 3;
     [SerializeField] float jumpImpulse = 20;
     [SerializeField] float groundCheckDistance = 1;
+    [SerializeField] Vector3 gravity = Physics.gravity;
     [SerializeField] LayerMask groundLayer;
     [SerializeField] Transform head;
-    
+
     PlayerInputs inputs;
-    Rigidbody rb;
     Camera cam;
+    CharacterController characterController;
     CapsuleCollider cc;
     Animator animator;
 
+    Vector3 velocity = Vector3.zero;
     float verticalRotation = 0;
     bool isGrounded = false;
 
@@ -33,7 +35,7 @@ public class PlayerMove : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        characterController = GetComponent< CharacterController>();
         inputs = GetComponent<PlayerInputs>();
         cc = GetComponent<CapsuleCollider>();
         cam = Camera.main;
@@ -48,7 +50,9 @@ public class PlayerMove : MonoBehaviour
 
     private void MoveCharacter()
     {
-        Vector3 movement = new Vector3(inputs.MoveInput.x, 0, inputs.MoveInput.y);
+        velocity += gravity * Time.deltaTime;
+
+        Vector3 movement = new(inputs.MoveInput.x, 0, inputs.MoveInput.y);
         if (inputs.RunInput && movement.z > 0)
         {
             movement.z *= runMultiplier;
@@ -62,19 +66,13 @@ public class PlayerMove : MonoBehaviour
         animator.SetBool("IsStrafingLeft", movement.x < 0 && movement.z == 0);
         animator.SetBool("IsStrafingRight", movement.x > 0 && movement.z == 0);
 
-        movement = transform.forward * movement.z * -1 + transform.right * movement.x * -1;
-        movement *= walkSpeed;
-        movement.y = rb.velocity.y;
+        movement = (movement.z * transform.forward + movement.x * transform.right) * -1;
 
-        isGrounded = Physics.Raycast(GroundCheckOrigin, Vector3.down, groundCheckDistance, groundLayer);
+        animator.SetBool("IsJumping", !characterController.isGrounded);
+        if (inputs.JumpPress && characterController.isGrounded)
+            velocity.y = jumpImpulse;
 
-        animator.SetBool("IsJumping", !isGrounded);
-        if (inputs.JumpPress && isGrounded)
-            movement.y = jumpImpulse;
-
-        rb.velocity = movement;
-
-        Debug.DrawRay(GroundCheckOrigin, Vector3.down * groundCheckDistance, Color.red);
+        characterController.Move((walkSpeed * movement + velocity) * Time.deltaTime);
     }
 
     private void MoveCamera()
