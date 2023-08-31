@@ -28,5 +28,6 @@ public class MonsterAI : MonoBehaviour
     private void Update()
     {
         animator.SetBool("IsWalking", agent.velocity != Vector3.zero);
+        animator.SetBool("IsJumping", agent.isOnOffMeshLink);
     }
 }
