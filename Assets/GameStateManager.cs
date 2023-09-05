@@ -11,15 +11,28 @@ public class GameStateManager : MonoBehaviour
     {
         loseMenu = GameObject.FindGameObjectWithTag("LoseScreen");
         score = GameObject.FindGameObjectWithTag("Score").GetComponent<TextMeshProUGUI>();
-
         loseMenu.SetActive(false);
-        Time.timeScale = 1;
+        ResumeGame();
     }
-    public void Lose()
+    public void Lose(string message = "The monster caught you! \nYou lasted ")
+    {
+        score.text = message + FindObjectOfType<Timer>().ToString();
+        loseMenu.SetActive(true);
+        PauseGame();
+    }
+
+    void PauseGame()
     {
         Time.timeScale = 0;
-        score.text += FindObjectOfType<Timer>().ToString();
-        loseMenu.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+    void ResumeGame()
+    {
+        Time.timeScale = 1;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
     }
 
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(PlayerInputs))]
 public class PlayerMove : MonoBehaviour
 {
     [SerializeField] float mouseSensitivity = 1;
@@ -17,7 +16,6 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] LayerMask groundLayer;
     [SerializeField] Transform head;
 
-    PlayerInputs inputs;
     Camera cam;
     CharacterController characterController;
     CapsuleCollider cc;
@@ -36,7 +34,6 @@ public class PlayerMove : MonoBehaviour
     void Awake()
     {
         characterController = GetComponent< CharacterController>();
-        inputs = GetComponent<PlayerInputs>();
         cc = GetComponent<CapsuleCollider>();
         cam = Camera.main;
         animator = GetComponent<Animator>();
@@ -52,8 +49,8 @@ public class PlayerMove : MonoBehaviour
     {
         velocity += gravity * Time.deltaTime;
 
-        Vector3 movement = new(inputs.MoveInput.x, 0, inputs.MoveInput.y);
-        if (inputs.RunInput && movement.z > 0)
+        Vector3 movement = new(PlayerInputs.MoveInput.x, 0, PlayerInputs.MoveInput.y);
+        if (PlayerInputs.RunInput && movement.z > 0)
         {
             movement.z *= runMultiplier;
             animator.SetBool("IsRunning", true);
@@ -69,7 +66,7 @@ public class PlayerMove : MonoBehaviour
         movement = (movement.z * transform.forward + movement.x * transform.right) * -1;
 
         animator.SetBool("IsJumping", !characterController.isGrounded);
-        if (inputs.JumpPress && characterController.isGrounded)
+        if (PlayerInputs.JumpPress && characterController.isGrounded)
             velocity.y = jumpImpulse;
         else if (characterController.isGrounded)
             velocity.y = -1;
@@ -78,11 +75,16 @@ public class PlayerMove : MonoBehaviour
 
     private void MoveCamera()
     {
-        Vector2 delta = mouseSensitivity * Time.deltaTime * inputs.LookDelta;
+        Vector2 delta = mouseSensitivity * Time.deltaTime * PlayerInputs.LookDelta;
         float prevVerticalRotation = verticalRotation;
         verticalRotation -= delta.y;
         verticalRotation = Mathf.Clamp(verticalRotation, camMinClamp, camMaxClamp);
         head.transform.Rotate(new Vector3(verticalRotation - prevVerticalRotation, 0, 0));
         transform.Rotate(Vector3.up * delta.x);
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer == 9)
+            FindObjectOfType<GameStateManager>().Lose("You fell to your death! \nYou lasted ");
     }
 }

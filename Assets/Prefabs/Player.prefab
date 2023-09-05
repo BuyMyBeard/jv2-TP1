@@ -10,11 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7167592988211215055}
   - component: {fileID: 5163390031529893985}
-  - component: {fileID: 9004750121169326592}
   - component: {fileID: 2343272609108665500}
   - component: {fileID: 1407042676765042110}
   - component: {fileID: 2378095428646007207}
-  - component: {fileID: 5196927499262944902}
   - component: {fileID: 5360255111639680517}
   m_Layer: 7
   m_Name: Player
@@ -62,19 +60,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &9004750121169326592
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6999630452109004539}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6381ab4da156ba24cbabe7cfb6e2e4f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  jumpBuffer: 0.1
 --- !u!114 &2343272609108665500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90,8 +75,8 @@ MonoBehaviour:
   mouseSensitivity: 40
   camMinClamp: -15
   camMaxClamp: 90
-  walkSpeed: 10
-  runMultiplier: 3
+  walkSpeed: 3
+  runMultiplier: 2
   jumpImpulse: 5
   groundCheckDistance: 0.1
   gravity: {x: 0, y: -9.81, z: 0}
@@ -147,22 +132,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!208 &5196927499262944902
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6999630452109004539}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Shape: 1
-  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
-  m_MoveThreshold: 0.1
-  m_Carve: 0
-  m_CarveOnlyStationary: 0
-  m_Center: {x: 0, y: 0, z: 0}
-  m_TimeToStationary: 0.5
 --- !u!143 &5360255111639680517
 CharacterController:
   m_ObjectHideFlags: 0

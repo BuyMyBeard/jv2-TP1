@@ -39,19 +39,17 @@ public class ButtonPrompt : MonoBehaviour
     Transform player;
     List<Interactable> possiblePrompts = new();
     Interactable currentPrompt;
-    PlayerInputs inputs;
     //bool onCooldown = false;
 
     void Awake()
     {
-        inputs = FindObjectOfType<PlayerInputs>();
         player = FindObjectOfType<PlayerMove>().transform;
         HidePrompt();
     }
     void Update()
     {
         
-        if (currentPrompt != null && inputs.InteractPress && Time.timeScale != 0)
+        if (currentPrompt != null && PlayerInputs.InteractPress && Time.timeScale != 0)
         {
             currentPrompt.Interact();
             CancelPrompt(currentPrompt);

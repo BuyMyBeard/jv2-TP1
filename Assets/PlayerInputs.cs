@@ -1,58 +1,64 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting.Dependencies.NCalc;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Windows;
 
-public class PlayerInputs : MonoBehaviour
+public static class PlayerInputs
 {
-    [SerializeField] float jumpBuffer = 0.1f;
-    ActionMap inputs;
-    InputAction runAction, jumpAction, interactAction;
-    public Vector2 MoveInput
+    static readonly int buffer = 100;
+    static readonly ActionMap inputs;
+    static readonly InputAction runAction, jumpAction, interactAction;
+    public static Vector2 MoveInput
     {
         get => inputs.PlayerControls.Move.ReadValue<Vector2>();
     }
-    public Vector2 LookDelta
+    public static Vector2 LookDelta
     {
         get => inputs.PlayerControls.Look.ReadValue<Vector2>();
     }
 
-    public bool RunInput { get; private set; } = false;
-    public bool JumpPress { get; private set; } = false;
-    public bool JumpHold { get; private set; } = false;
-    public bool InteractPress { get; private set; } = false;
-    public bool InteractHold { get; private set; } = false;
-    void Awake()
+    public static bool RunInput { get; private set; } = false;
+    public static bool JumpPress { get; private set; } = false;
+    public static bool JumpHold { get; private set; } = false;
+    public static bool InteractPress { get; private set; } = false;
+    public static bool InteractHold { get; private set; } = false;
+    static PlayerInputs()
     {
         inputs = new ActionMap();
         runAction = inputs.FindAction("Run");
         jumpAction = inputs.FindAction("Jump");
         interactAction = inputs.FindAction("Interact");
+        OnEnable();
     }
 
-    private void OnEnable()
+    private static void OnEnable()
     {
         inputs.Enable();
         runAction.started += (_) => RunInput = true;
         runAction.canceled += (_) => RunInput = false;
-        jumpAction.started += (_) => { StartCoroutine(BufferJump()); JumpHold = true; };
+        jumpAction.started += (_) => { JumpHold = true; BufferJump(); };
         jumpAction.canceled += (_) => JumpHold = false;
-        interactAction.started += (_) => { StartCoroutine(BufferInteract()); InteractHold = true; };
+        interactAction.started += (_) => { InteractHold = true; BufferInteract(); };
         interactAction.canceled += (_) => InteractHold = false;
     }
 
-    private IEnumerator BufferJump()
+    private static void BufferJump()
     {
         JumpPress = true;
-        yield return new WaitForSeconds(jumpBuffer);
-        JumpPress = false;
+        Wait(buffer).ContinueWith(_ => JumpPress = false);
     }
-    private IEnumerator BufferInteract()
+    private static void BufferInteract()
     {
         InteractPress = true;
-        yield return new WaitForSeconds(jumpBuffer);
-        InteractPress = false;
+        Wait(buffer).ContinueWith(_ => InteractPress = false);
+    }
+
+    public static async Task Wait(int milliseconds)
+    {
+        await Task.Run(() =>
+        {
+            Task.Delay(milliseconds).Wait();
+        });
     }
 }
