@@ -1,5 +1,6 @@
 Shader "Custom/XRayStandard"
 {
+    //code copié de https://www.youtube.com/watch?v=EthjeNeNTsM
     Properties
     {
         _Color ("Color", Color) = (1,1,1,1)
