@@ -23,7 +23,6 @@ public class PlayerMove : MonoBehaviour
 
     Vector3 velocity = Vector3.zero;
     float verticalRotation = 0;
-    bool isGrounded = false;
 
     Vector3 GroundCheckOrigin
     {
